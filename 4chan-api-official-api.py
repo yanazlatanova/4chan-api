@@ -56,6 +56,24 @@ def clean_html(text):
     clean = clean.replace('<br>', '\n')
     clean = clean.replace('<wbr>', '')
     
+    # Clean up 4chan quote links (>>123456789>)
+    clean = re.sub(r'>>\d+>', '', clean)  # Remove quote links like >>519431737>
+    # like in "post_text": ">>519433413>We already know that people who didn't get the vaccine are more rural and unhealthier than those who did get the vaccineApproximately 6.5 million healthy young adults (ages 18-49) in Canada received at least one covid vaccine dose, based on 2023 national coverage rates of 75% across this group. That ESMO study getting all the media hype right now is totally bogus and cooked up on political orders, because the cancer-causing effects of gene therapy disguised as a \"covid vaccine\" are slowly breaking through to public awareness and thats a deadly threat to the murderers running governments.",
+
+    
+    # Clean up greentext arrows at start of lines
+    clean = re.sub(r'^>+', '> ', clean, flags=re.MULTILINE)  # Normalize greentext
+    
+    # WHAT IS GREENTEXT?
+    # Greentext is a distinctive 4chan posting style where lines starting with ">" appear in green color
+    # Used for storytelling, quoting, implications, or emphasis. Common formats:
+    # > be me                    (storytelling format)
+    # > 22 years old
+    # > decide to learn coding
+    # > implying democracy works (sarcastic implications)
+    # > Trump wins election      (listing points/events)
+    # The regex above normalizes multiple arrows (>>>, >>>>) to single "> " for cleaner output
+    
     return clean.strip()
 
 def check_keywords(text, keywords):

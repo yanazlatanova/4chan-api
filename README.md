@@ -173,7 +173,7 @@ Each filtered post includes:
 - Post timestamp and poster name
 - Direct links to the thread and specific post
 - Matched keywords
-- Full post text
+- Full post text (cleaned of HTML tags and 4chan quote links)
 
 ## Which Script Should I Use?
 
