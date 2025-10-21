@@ -12,7 +12,7 @@ keywords = ["immigrants", "border", "refugees", "asylum", "migration", "illegal"
 
 # Configuration
 board = "pol"  # Board to search
-max_threads = 800  # Limit threads to process (archived threads can be numerous)
+max_threads = 800 # real maximum: 3000 # Limit threads to process (archived threads can be numerous)
 
 # Optional country filter (set to None to disable)
 filter_country = "Denmark" # None # Set to None to include all countries, or specify country like "Denmark", "United States", etc.
