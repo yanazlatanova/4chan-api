@@ -14,6 +14,9 @@ keywords = ["immigrants", "border", "refugees", "asylum", "migration", "illegal"
 board = "pol"  # Board to search
 max_threads = 800  # Limit threads to process (archived threads can be numerous)
 
+# Optional country filter (set to None to disable)
+filter_country = "Denmark" # None # Set to None to include all countries, or specify country like "Denmark", "United States", etc.
+
 # Create output directory
 output_dir = "output_pychan_archived"
 if not os.path.exists(output_dir):
@@ -26,6 +29,10 @@ total_threads = 0
 archived_threads_processed = 0
 
 print(f"Fetching archived threads from /{board}/...\n")
+if filter_country:
+    print(f"Country filter: Only showing posts from {filter_country}")
+else:
+    print("Country filter: Disabled (showing all countries)")
 print("Note: This may take longer than live threads since we're processing archived content.\n")
 
 try:
@@ -43,6 +50,10 @@ try:
         try:
             for post in fourchan.get_posts(thread):
                 total_posts += 1
+                
+                # Optional country filter
+                if filter_country and post.poster.flag != filter_country:
+                    continue
                 
                 # Convert to lowercase for matching
                 text_lower = post.text.lower()
@@ -80,7 +91,8 @@ try:
                     }
                     filtered_posts.append(post_data)
                     
-                    print(f"✓ Match #{len(filtered_posts)}: {matched} in archived thread")
+                    country_info = f" from {post.poster.flag}" if post.poster.flag else " (no flag)"
+                    print(f"✓ Match #{len(filtered_posts)}: {matched} in archived thread{country_info}")
                     print(f"  Thread: {post.thread.title[:50] if post.thread.title else 'No title'}...")
                     print(f"  Text preview: {post.text[:100]}...\n")
         
@@ -110,6 +122,7 @@ if filtered_posts:
         f.write(f"ARCHIVED THREADS ANALYSIS - /{board}/\n")
         f.write(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
         f.write(f"Keywords: {', '.join(keywords)}\n")
+        f.write(f"Country filter: {filter_country if filter_country else 'All countries'}\n")
         f.write(f"Threads processed: {archived_threads_processed}\n")
         f.write(f"Total posts: {total_posts}\n")
         f.write(f"Matching posts: {len(filtered_posts)}\n")
@@ -146,6 +159,19 @@ if filtered_posts:
     print(f"  Unique threads with matches: {unique_threads}")
     print(f"  Original posts (thread starters): {original_posts}")
     print(f"  Posts with files/images: {posts_with_files}")
+    
+    if filter_country:
+        country_posts = sum(1 for post in filtered_posts if post['poster_flag'] == filter_country)
+        print(f"  Posts from {filter_country}: {country_posts}")
+    else:
+        countries = {}
+        for post in filtered_posts:
+            flag = post['poster_flag'] if post['poster_flag'] != "No Flag" else "No Flag"
+            countries[flag] = countries.get(flag, 0) + 1
+        print(f"  Countries represented: {len(countries)}")
+        if len(countries) <= 10:  # Only show if not too many
+            for country, count in sorted(countries.items(), key=lambda x: x[1], reverse=True):
+                print(f"    {country}: {count} posts")
     
 else:
     print("\n✗ No matches found with current keywords in archived threads")
