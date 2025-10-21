@@ -1,191 +1,122 @@
-# 4chan API Scripts
+# 4chan Archive Analysis Tool
 
-Two Python scripts to fetch and filter posts from 4chan boards with different approaches and dependencies.
+A Python tool to analyze archived threads from 4chan boards using the pychan library, with keyword filtering and country-specific analysis.
 
 ## Prerequisites
 
 - Python 3.x
 - VS Code (recommended code editor): https://code.visualstudio.com/
 
-### Checking if Python is installed
-
-To check if Python is installed on your system, open a terminal/command prompt and run:
-
-```bash
-python --version
-```
-
-or
-
-```bash
-python3 --version
-```
-
-If Python is installed, you'll see a version number (e.g., `Python 3.9.7`). If not, you'll get an error message.
-
 ### Installing Python
 
-If you don't have Python installed, download it from the official website:
+If you don't have Python installed, download it from:
 https://www.python.org/downloads/
 
 Make sure to check "Add Python to PATH" during installation on Windows.
 
-## Script Options
+## Main Tool: `4chan-api-pychan-archived.py`
 
-This repository contains two different approaches to accessing 4chan data:
+This is the primary script for analyzing **archived threads** from 4chan boards. It fetches historical data and filters posts based on keywords and country flags.
 
-### 1. `4chan-api-pychan-api.py` - Using PyChan Library
-**Easy to use, feature-rich**
-- Uses the `pychan` third-party library
-- Simplified API with built-in error handling
-- Automatic rate limiting and retry logic
-- Clean object-oriented interface
-- Better for beginners
+### Key Features:
+- ✅ **Archived Thread Analysis** - Accesses historical 4chan data
+- ✅ **Country Filtering** - Filter posts by poster's country flag (e.g., Denmark)
+- ✅ **Keyword Matching** - Search for specific terms in post content
+- ✅ **Dual Output** - Generates both JSON and human-readable text files
+- ✅ **Comprehensive Statistics** - Shows detailed analysis results
 
-### 2. `4chan-api-official-api.py` - Raw Official API
-**Direct API access, more control**
-- Uses only the official 4chan API endpoints
-- Raw HTTP requests with `requests` library
-- More configurable time ranges and keywords
-- No external dependencies (except requests)
-- Better for advanced users who want full control
+### Other Scripts (Brief Overview):
+- `4chan-api-pychan-api.py` - Analyzes live threads using pychan (basic version)
+- `4chan-api-official-api.py` - Uses official 4chan API for live threads (advanced control)
 
 ## Installation
 
-### For `4chan-api-pychan-api.py` (PyChan version):
+Install the required library:
 ```bash
 pip install pychan
 ```
 
-### For `4chan-api-official-api.py` (Raw API version):
-```bash
-pip install requests
-```
-*Note: `requests` is usually pre-installed with Python*
-
 ## Usage
 
-### Running the PyChan Version (`4chan-api-pychan-api.py`):
+### Running the Archive Analysis Tool:
+
 ```bash
-python 4chan-api-pychan-api.py
+python 4chan-api-pychan-archived.py
 ```
 
-**Features:**
-- Automatically searches /pol/ board
-- Fixed date range (yesterday to today)
-- Predefined keywords: trump, election, vote, biden, government, president, policy, democrat, republican
-- Easy to use but less customizable
-
-### Running the Raw API Version (`4chan-api-official-api.py`):
-```bash
-python 4chan-api-official-api.py
-```
-
-**Features:**
-- Fully configurable time ranges (edit the script to modify)
-- Customizable keywords list
-- Can change board (pol, b, g, etc.)  
-- More detailed output and error handling
-- No external library dependencies
-
-### How to run either file:
-
-**Using VS Code (Recommended):**
+**Quick Start:**
 1. Open the folder in VS Code
-2. Open the VS Code terminal: Press `Ctrl + `` (backtick) or go to Terminal → New Terminal
-3. Run either script:
-   ```bash
-   python 4chan-api-pychan-api.py
-   ```
-   or
-   ```bash
-   python 4chan-api-official-api.py
-   ```
+2. Open terminal: Press `Ctrl + `` (backtick) or Terminal → New Terminal
+3. Run: `python 4chan-api-pychan-archived.py`
 
+The script will create an `output_pychan_archived/` folder and save results there.
 
-**Alternative method:**
-1. **Open a terminal/command prompt:**
-   - On Windows: Press `Win + R`, type `cmd`, and press Enter
-   - On Mac: Press `Cmd + Space`, type "Terminal", and press Enter
-   - On Linux: Press `Ctrl + Alt + T`
+## Configuration !!!
 
-2. **Navigate to the script directory:**
-   ```bash
-   cd path/to/your/4chan-api-folder
-   ```
-
-3. **Run the script:**
-   ```bash
-   python 4chan-api.py
-   ```
-
-   If the above doesn't work, try:
-   ```bash
-   python3 4chan-api.py
-   ```
-
-## Documentation
-
-### PyChan Library Documentation:
-For complete documentation of the pychan library, please visit:
-https://github.com/cooperwalbrun/pychan?tab=readme-ov-file
-
-### Official 4chan API Documentation:
-For the official 4chan API specification and catalog documentation:
-https://github.com/4chan/4chan-API/blob/master/pages/Catalog.md
-
-## Configuration
-
-### PyChan Version (`4chan-api-pychan-api.py`):
-- **No configuration needed** - runs with default settings
-- Searches for predefined political keywords
-- Fixed time range (recent posts)
-
-### Raw API Version (`4chan-api-official-api.py`):
-Edit the configuration section at the top of the file:
+Edit the configuration section at the top of `4chan-api-pychan-archived.py`:
 
 ```python
 # Keywords to search for
-KEYWORDS = ["trump", "election", "vote", "biden"]
-
-# Time range
-START_DATE = datetime.now(timezone.utc) - timedelta(hours=6)  # Last 6 hours
-END_DATE = datetime.now(timezone.utc)
+keywords = ["immigrants", "border", "refugees", "asylum", "migration", "illegal", "visa", "citizenship", "deportation"]
 
 # Board to search
-BOARD = "pol"
+board = "pol"  
+
+# Thread processing limit
+max_threads = 800  # Real maximum: 3000
+
+# Country filter (optional)
+filter_country = "Denmark"  # Set to None for all countries
 ```
+
+### Important: `max_threads` Setting
+
+- **Default**: `max_threads = 800` (processes 800 out of 3000 available archived threads)
+- **Real Maximum**: 3000 archived threads are available on /pol/
+- **For Complete Analysis**: Set `max_threads = 3000` to process all archived threads
+- **Trade-off**: Higher numbers = more comprehensive data but longer processing time
+
+### Country Filtering
+
+Set `filter_country` to filter posts by poster's country flag:
+- `"Denmark"` - Only Danish posts
+- `"United States"` - Only US posts  
+- `None` - All countries
 
 ## Output
 
-Both scripts generate files in the `output/` directory:
+The script generates two types of files in the `output_pychan_archived/` directory:
 
-### PyChan Version:
-- `pol_filtered_YYYYMMDD_HHMMSS.json` - Machine-readable JSON format
-- `pol_filtered_YYYYMMDD_HHMMSS.txt` - Human-readable text format
+### Generated Files:
+- **JSON Format**: `pol_archived_filtered_YYYYMMDD_HHMMSS.json` - Machine-readable data
+- **Text Format**: `pol_archived_filtered_YYYYMMDD_HHMMSS.txt` - Human-readable analysis
 
-### Raw API Version:
-- `pol_filtered_raw_YYYYMMDD_HHMMSS.json` - Machine-readable JSON format  
-- `pol_filtered_raw_YYYYMMDD_HHMMSS.txt` - Human-readable text format
+### Each Filtered Post Includes:
+- Thread title and board information
+- Post timestamp and poster details (name, ID, country flag)
+- Direct URLs to thread and specific post
+- Matched keywords that triggered the filter
+- Full post content
+- File attachments (if any)
+- Statistics (original posts, unique threads, country breakdown)
 
-Each filtered post includes:
-- Thread title and information
-- Post timestamp and poster name
-- Direct links to the thread and specific post
-- Matched keywords
-- Full post text (cleaned of HTML tags and 4chan quote links)
+## Example Usage Scenarios
 
-## Which Script Should I Use?
+1. **Analyze Danish Immigration Discourse**: 
+   - Set `filter_country = "Denmark"`
+   - Use immigration-related keywords
+   - Process recent archived threads (`max_threads = 800`)
 
-**Choose `4chan-api-pychan-api.py` (PyChan) if:**
-- ✅ You want something that "just works"
-- ✅ You're new to programming
-- ✅ You don't need to customize settings much
-- ✅ You want built-in error handling
+2. **Complete Historical Analysis**:
+   - Set `max_threads = 3000` for full coverage
+   - Set `filter_country = None` for all countries
+   - Expect longer processing time but comprehensive data
 
-**Choose `4chan-api-official-api.py` (Raw API) if:**
-- ✅ You want full control over time ranges
-- ✅ You want to customize keywords easily
-- ✅ You want to search different boards
-- ✅ You prefer minimal dependencies
-- ✅ You want to understand how the API works
+3. **Quick Sample Analysis**:
+   - Set `max_threads = 100` for fast results
+   - Focus on specific keywords of interest
+
+## Documentation
+
+**PyChan Library**: https://github.com/cooperwalbrun/pychan?tab=readme-ov-file
+**4chan API**: https://github.com/4chan/4chan-API/blob/master/pages/Catalog.md
